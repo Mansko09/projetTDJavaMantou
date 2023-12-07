@@ -6,11 +6,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.security.cert.PolicyNode;
+import java.util.ArrayList;
 
 public class GameScene extends Scene {
+    private ArrayList<StaticThing> lifePoints;
     private Camera camera;
     private StaticThing right;
     private StaticThing left;
+    private StaticThing lifePoint;
     private Hero hero;
     int numberOfLives;
 
@@ -21,14 +24,25 @@ public class GameScene extends Scene {
         this.right = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
 
         //ImageView heroImageView = new ImageView(new Image("file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/hero.png"));
-        this.hero = new Hero(600, 200, 3, 6, 50, 50, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/hero.png");
+        this.hero = new Hero(600, 300, 3, 6, 100, 90, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
 
-        hero.getImageView().setLayoutX(50);
-        hero.getImageView().setLayoutY(50);
+        //ajout des coeurs
+        this.lifePoints=new ArrayList<StaticThing>();
+        for (int i=0; i<numberOfLives;i++){
+            this.lifePoint=new StaticThing(20,20,"file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heart_image.jpg");
+            this.lifePoints.add(lifePoint);
+        }
+
+
+        //Hero's starting position
+        hero.getImageView().setLayoutX(600);
+        hero.getImageView().setLayoutY(250);
+        hero.getImageView().setOpacity(1);
         if (left != null && right != null && hero.getImageView() != null) {
             root.getChildren().add(left.getImageView());
             root.getChildren().add(right.getImageView());
             root.getChildren().add(hero.getImageView());
+
         } else {
             System.out.println("Un des nœuds est null. Vérifiez le chargement des images.");
         }
