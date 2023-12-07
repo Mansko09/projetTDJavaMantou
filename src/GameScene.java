@@ -27,9 +27,12 @@ public class GameScene extends Scene {
         this.hero = new Hero(600, 300, 3, 6, 100, 90, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
 
         //ajout des coeurs
+        double heartSize = 20;
         this.lifePoints=new ArrayList<StaticThing>();
         for (int i=0; i<numberOfLives;i++){
-            this.lifePoint=new StaticThing(20,20,"file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heart_image.jpg");
+            this.lifePoint=new StaticThing(20,20,"file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heart_image.png");
+            lifePoint.getImageView().setLayoutX(20 + i * (heartSize + 5));
+            lifePoint.getImageView().setLayoutY(20);
             this.lifePoints.add(lifePoint);
         }
 
@@ -46,7 +49,10 @@ public class GameScene extends Scene {
         } else {
             System.out.println("Un des nœuds est null. Vérifiez le chargement des images.");
         }
-
+        // Ajout des coeurs à la scène
+        for (StaticThing heart : lifePoints) {
+            root.getChildren().add(heart.getImageView());
+        }
 
         //render(width);
     }
