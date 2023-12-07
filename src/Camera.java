@@ -7,7 +7,7 @@ public class Camera extends Parent {
 
     public Camera(int x, int y) {
         this.x = x;
-        this.y=y;
+        this.y = y;
     }
 
     public int getX() {
@@ -19,13 +19,14 @@ public class Camera extends Parent {
     }
 
     @Override
-    public String toString(){
-        return(getX() + "," +getY());
+    public String toString() {
+        return (getX() + "," + getY());
 
-    }
-
-    @Override
-    public Node getStyleableNode() {
-        return super.getStyleableNode();
     }
 }
+
+    /*@Override
+    public Node getStyleableNode() {
+        return super.getStyleableNode();
+    }*/
+
