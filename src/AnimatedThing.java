@@ -36,7 +36,15 @@ public abstract class AnimatedThing {
         return numberOfLives;
     }
 
+    public void update(long time){
+
+    }
+
+
+
 }
+
+
 
 
 

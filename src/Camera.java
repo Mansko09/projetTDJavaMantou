@@ -23,6 +23,13 @@ public class Camera extends Parent {
         return (getX() + "," + getY());
 
     }
+    public void update(long time){
+
+    }
+
+
+
+
 }
 
     /*@Override

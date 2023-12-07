@@ -1,3 +1,4 @@
+import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.Node;
@@ -16,6 +17,9 @@ public class GameScene extends Scene {
     private StaticThing lifePoint;
     private Hero hero;
     int numberOfLives;
+    private double backgroundSpeed=2.0;
+
+    private AnimationTimer timer;
 
     public GameScene(Pane root, double width, double height, Camera camera, int numberOfLives) {
         super(root, width, height);
@@ -36,7 +40,8 @@ public class GameScene extends Scene {
             this.lifePoints.add(lifePoint);
         }
 
-
+        left.getImageView().setLayoutX(0);
+        right.getImageView().setLayoutX(width);
         //Hero's starting position
         hero.getImageView().setLayoutX(600);
         hero.getImageView().setLayoutY(250);
@@ -53,33 +58,46 @@ public class GameScene extends Scene {
         for (StaticThing heart : lifePoints) {
             root.getChildren().add(heart.getImageView());
         }
-
+        startBackgroundScrolling();
         //render(width);
+
     }
 
-    /*private void createHearts(int numberOfLives){
-        double heartSize = 20; // Set the size of the hearts
-        // Create and position hearts based on numberOfLives
-        for (int i = 0; i < numberOfLives; i++) {
-            ImageView heart = new ImageView("files/heart_image.png");
-            heart.setFitWidth(heartSize);
-            heart.setFitHeight(heartSize);
-            heart.setLayoutX(i * (heartSize + 5)); // Adjust the spacing between hearts
-            heart.setLayoutY(10); // Adjust the Y position of hearts as needed
-            heartPane.getChildren().add(heart);
-        }
+    private void startBackgroundScrolling() {
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long time) {
+                updateBackgroundPosition();
+                camera.update(time);
+                hero.update(time);
+            }
+        };
+        timer.start();
     }
-    // Method to update the displayed hearts based on the number of lives
-    public void updateHearts(int remainingLives) {
-        //heartPane.getChildren().clear(); // Clear existing hearts
 
-        // Create hearts based on the updated remaining lives
-        for (int i = 0; i < remainingLives; i++) {
-            ImageView heart = new ImageView("heart_image.png");
-            // Set size and position similar to createHearts() method
-            // Add the heart ImageView to heartPane.getChildren()
+
+    private void updateBackgroundPosition() {
+        double newLeftBackgroundX = left.getImageView().getLayoutX() - backgroundSpeed;
+        double newRightBackgroundX = right.getImageView().getLayoutX() - backgroundSpeed;
+
+        // Check if backgrounds moved completely out of the scene
+        if (newLeftBackgroundX + left.getImageView().getFitWidth() <= 0) {
+            newLeftBackgroundX = newRightBackgroundX + right.getImageView().getFitWidth();
         }
-    }*/
+        if (newRightBackgroundX + right.getImageView().getFitWidth() <= 0) {
+            newRightBackgroundX = newLeftBackgroundX + left.getImageView().getFitWidth();
+        }
+        left.getImageView().setLayoutX(newLeftBackgroundX);
+        right.getImageView().setLayoutX(newRightBackgroundX);
+    }
+    private void update(long time) {
+        // Call the hero's update method
+        hero.update(time);
+        // Call the camera's update method
+        camera.update(time);
+    }
+
+    
 
   /*  public void setViewPos(double posX, double posY){
         this.imageView.setX(posX);
