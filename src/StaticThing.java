@@ -17,7 +17,6 @@ public class StaticThing {
         } catch (Exception e) {
             System.out.println("Erreur lors du chargement de l'image : " + e.getMessage());
             e.printStackTrace();
-            // Gérer l'erreur : peut-être utiliser une image de secours ou afficher un message à l'utilisateur
         }
     }
 

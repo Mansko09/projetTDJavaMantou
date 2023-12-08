@@ -1,4 +1,5 @@
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.Node;
@@ -17,8 +18,8 @@ public class GameScene extends Scene {
     private StaticThing lifePoint;
     private Hero hero;
     int numberOfLives;
-    private double backgroundSpeed=2.0;
-
+    private double backgroundSpeed=3;
+    private int currentFrame = 0;
     private AnimationTimer timer;
 
     public GameScene(Pane root, double width, double height, Camera camera, int numberOfLives) {
@@ -26,11 +27,15 @@ public class GameScene extends Scene {
         this.camera = camera;
         this.left = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
         this.right = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
+        int frameWidth = 75; // Width of each frame in the sprite sheet
+        int frameHeight = 100; // Height of each frame in the sprite sheet
 
-        //ImageView heroImageView = new ImageView(new Image("file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/hero.png"));
-        this.hero = new Hero(600, 300, 3, 6, 100, 90, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
-
-        //ajout des coeurs
+        // Calculate the x-coordinate of the 4th frame (assuming 0-based indexing)
+        //int frameIndexToShow = 5; // 4th frame (0-based index)
+        this.hero = new Hero(600, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        // Set the desired frame index to display (e.g., 3 for the 4th frame)
+        //hero.setFrameIndex(frameIndexToShow);
+        //création coeurs
         double heartSize = 20;
         this.lifePoints=new ArrayList<StaticThing>();
         for (int i=0; i<numberOfLives;i++){
@@ -62,19 +67,22 @@ public class GameScene extends Scene {
         //render(width);
 
     }
-
     private void startBackgroundScrolling() {
-        AnimationTimer timer = new AnimationTimer() {
+        final long[] startNanoTime = {System.nanoTime()};
+        final double frameDuration = 0.15; // Temps en secondes entre chaque changement de frame
+        timer = new AnimationTimer() {
             @Override
-            public void handle(long time) {
+            public void handle(long currentNanoTime) {
                 updateBackgroundPosition();
-                camera.update(time);
-                hero.update(time);
+                double elapsedTime = (currentNanoTime - startNanoTime[0]) / 1_000_000_000.0; // Temps écoulé en secondes
+                if (elapsedTime > frameDuration) {
+                    update((long) elapsedTime);
+                    startNanoTime[0] = currentNanoTime;
+                }
             }
         };
         timer.start();
     }
-
 
     private void updateBackgroundPosition() {
         double newLeftBackgroundX = left.getImageView().getLayoutX() - backgroundSpeed;
@@ -91,11 +99,14 @@ public class GameScene extends Scene {
         right.getImageView().setLayoutX(newRightBackgroundX);
     }
     private void update(long time) {
-        // Call the hero's update method
-        hero.update(time);
+        hero.changeFrameIndex(currentFrame);
+        currentFrame = (currentFrame + 1) % hero.getTotalFrames(); // Update the frame index
         // Call the camera's update method
         camera.update(time);
+        hero.update(time);
+
     }
+
 
     
 
