@@ -9,12 +9,13 @@ public class Hero extends AnimatedThing {
     private int currentFrameIndex=0;
     int frameWidth = 80; // Width of each frame in the sprite sheet
     int frameHeight = 100; // Height of each frame in the sprite sheet
-    int totalFrames = 6; // Total number of frames in the sprite sheet
+    int totalFrames = 8; // Total number of frames in the sprite sheet
     private List<Integer> listOfHeroFrames;
     private double speed;//constant speed for the hero
     private double gravity = 0.5;
-    private double jumpForce = -12;
+    private double jumpForce = -12; //aka the height of the jump
     private double velocityY=0;
+    private boolean isJumping = false;
 
     public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName, double gravity, double jumpForce) {
         super(x, y, numberOfLives,maxIndex, windowHeight, windowWidth, fileName);
@@ -31,67 +32,70 @@ public class Hero extends AnimatedThing {
         listOfHeroFrames.add(frame3);
         listOfHeroFrames.add(frame4);
         listOfHeroFrames.add(frame5);
+        int jumping0=0;
+        int running1=frameWidth+15;
+        listOfHeroFrames.add(jumping0);
+        listOfHeroFrames.add(running1);
+
         this.speed=speed;
         this.gravity=gravity;
         this.jumpForce=jumpForce;
     }
-    //code to display the different starting positions of the hero
+    //code with the different starting positions of the hero
     public void setFrameIndex(int frameIndexToShow) {
         int frameWidth = 75; // Width of each frame in the sprite sheet
         int frameHeight = 100; // Height of each frame in the sprite sheet
-        int frameX;
-        int distanceBtwFrames;
+        int frameX=0;
+        int frameY=0;
         if (frameIndexToShow==0){
             frameX=listOfHeroFrames.get(0);
         }
         else {
-            switch (frameIndexToShow) {
-                case 1:
-                    // Calculate the x-coordinate of the frame to display (based on frameIndexToShow)
-                    frameX= listOfHeroFrames.get(1);
-                    break;
-                case 2:
-                    // Calculate the x-coordinate of the frame to display (based on frameIndexToShow)
-                    frameX = listOfHeroFrames.get(2);
-                    break;
-                case 3:
-                    // Calculate the x-coordinate of the frame to display (based on frameIndexToShow)
-                    frameX = listOfHeroFrames.get(3);
-                    break;
-                case 4:
-                    // Calculate the x-coordinate of the frame to display (based on frameIndexToShow)
-                    frameX =listOfHeroFrames.get(4);
-                    break;
-                case 5:
-                    // Calculate the x-coordinate of the frame to display (based on frameIndexToShow)
-                    frameX = listOfHeroFrames.get(5);
-                    break;
-                default:
-                    frameX = 0;
-                    System.out.println("Problem with the frame index0");
+            if (frameIndexToShow >0 && frameIndexToShow < getTotalFrames()) {
+                frameX = listOfHeroFrames.get(frameIndexToShow);
+                if (frameIndexToShow >= 6) {
+                    frameY = 160;
+                }
             }
         }
         // Set the viewport to display the specified frame
-        getImageView().setViewport(new Rectangle2D(frameX, 0, frameWidth, frameHeight));
+        getImageView().setViewport(new Rectangle2D(frameX, frameY, frameWidth, frameHeight));
     }
     @Override
     public void update(long time) {
-        // Update the frame index for the running animation
-        setFrameIndex(currentFrameIndex);
-        currentFrameIndex = (currentFrameIndex + 1) % getTotalFrames();
-        //apply gravity to the Y velocity to simulate falling
-        velocityY+=gravity;
-        //update hero's position in the Y direction based on the velocity
-        double newY=getImageView().getLayoutY()+velocityY;
+        // Update the frame index for the running animation if not jumping
+        if (!isJumping) {
+            setFrameIndex(currentFrameIndex);
+            currentFrameIndex = (currentFrameIndex + 1) % 6; // because there are only 6 frames for running
+        }
+
+        // Apply gravity to the Y velocity to simulate falling
+        velocityY += gravity ;
+
+        // Update hero's position in the Y direction based on the velocity
+        double newY = getImageView().getLayoutY() + velocityY;
+
         // Ensure the Hero cannot go below pixel 250
         if (newY > 250) {
             newY = 250;
             velocityY = 0; // Stop falling when reaching the ground
+            isJumping = false; // Set jumping state to false
+            setFrameIndex(0); // Display default frame when landing (adjust as needed)
+        }
+
+        // Check if the Hero is jumping or falling
+        if (velocityY < 0) { // If the Hero is moving upwards (jumping)
+            setFrameIndex(6); // Display jumping0 frame
+            isJumping = true; // Set jumping state to true
+        } else if (velocityY >= 0 && isJumping) { // If the Hero is falling
+            setFrameIndex(7); // Display jumping falling frame
+        } else if (!isJumping) { // If not jumping or falling, switch back to running animation
+            setFrameIndex(currentFrameIndex);
+            currentFrameIndex = (currentFrameIndex + 1) % 6; // because there are only 6 frames for running
         }
 
         // Set the new Y position for the Hero
         getImageView().setLayoutY(newY);
-
     }
     private boolean isOnGround() {
         // Check if the Hero is on the ground
@@ -117,6 +121,8 @@ public class Hero extends AnimatedThing {
     public void jump(){
         if(isOnGround()){
             velocityY=jumpForce;
+            isJumping = true; // Set jumping state to true when jumping
+            setFrameIndex(6); // Display jumping0 frame when jumping starts (adjust as needed)
         }
     }
 

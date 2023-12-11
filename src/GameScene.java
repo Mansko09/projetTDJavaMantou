@@ -1,5 +1,4 @@
 import javafx.animation.AnimationTimer;
-
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -13,6 +12,7 @@ public class GameScene extends Scene {
     private StaticThing lifePoint;
     private Hero hero;
     int numberOfLives;
+    boolean isRunning=false;
     private double backgroundSpeed=3;
     private int currentFrame = 0;
     private AnimationTimer timer;
@@ -57,11 +57,11 @@ public class GameScene extends Scene {
         } else {
             System.out.println("Un des nœuds est null. Vérifiez le chargement des images.");
         }
-        if (camera != null && camera.cameraView != null) {
+       /* if (camera != null && camera.cameraView != null) {
             root.getChildren().add(camera.cameraView);
         } else {
             System.out.println("Camera or cameraView is null.");
-        }
+        }*/
         // Ajout des coeurs à la scène
         for (StaticThing heart : lifePoints) {
             root.getChildren().add(heart.getImageView());
@@ -84,7 +84,7 @@ public class GameScene extends Scene {
     }
     private void startBackgroundScrolling() {
         final long[] startNanoTime = {System.nanoTime()};
-        final double frameDuration = 0.12; // Temps en secondes entre chaque changement de frame
+        final double frameDuration =0.10; // Temps en secondes entre chaque changement de frame
         timer = new AnimationTimer() {
             @Override
             public void handle(long currentNanoTime) {
@@ -126,7 +126,6 @@ public class GameScene extends Scene {
             @Override
             public void handle(long currentNanoTime) {
                 double elapsedTime = (currentNanoTime - startNanoTime[0]) / 1_000_000_000.0; // Time elapsed in seconds
-
                 // Update Hero's position based on constant speed
                 hero.move(elapsedTime);
                 startNanoTime[0] = currentNanoTime;

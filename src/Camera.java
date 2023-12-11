@@ -1,5 +1,6 @@
-import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.Parent;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -14,15 +15,17 @@ public class Camera extends Parent {
     double damping=1.2; //damping constant (f/m)
 
     private Hero hero;
-    Rectangle cameraView; //rectangle to represent the camera view
+    ImageView cameraView; //red rectangle to display
 
     public Camera(double x, double y) {
         this.x = x;
         this.y = y;
-        //creation of the camera view rectangle
-        cameraView=new Rectangle(300,100);
-        cameraView.setStroke(Color.RED);
-        cameraView.setFill(Color.TRANSPARENT);
+        Image image = new Image("file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/red_rectangle.jpg");
+        // Create an ImageView with the loaded image
+        cameraView = new ImageView(image);
+        cameraView.setFitWidth(200);
+        cameraView.setFitHeight(100);
+
 
         //position the camera view
         cameraView.setLayoutX(x);
@@ -47,30 +50,30 @@ public class Camera extends Parent {
 
     }
     public void update(long time){
-        if (hero!=null){
-            //spring force calculus
-            double springForceX=stiffness*(hero.getX()-x);
-            double dampingForceX=damping*velocityX;
-            accelerationX=(springForceX-dampingForceX)/1.0; //assuming mass=1.0;
+        if (hero != null) {
+            // Spring force calculation
+            double springForceX = stiffness * (hero.getX() - x);
+            double dampingForceX = damping * velocityX;
+            accelerationX = (springForceX - dampingForceX) / 1.0; // Assuming mass = 1.0;
 
-            //update position using Euler integration
-            double deltaTime=time/1_000_000_000.0; //convert time to seconds
-            x+=velocityX*deltaTime;
+            // Update velocity using Euler integration
+            double deltaTime = time / 1_000_000_000.0; // Convert time to seconds
+            velocityX += accelerationX * deltaTime;
+
+            // Update position using Euler integration
+            x += velocityX * deltaTime;
         }
-        if (cameraView!=null){
-            cameraView.setLayoutX(x);
-            cameraView.setLayoutY(y);
+
+        if (cameraView != null) {
+            // Adjust camera's position to follow the hero (centering the hero in the view)
+            if (hero != null) {
+                //double offsetX = 1400 / 2.0; //1400=screen width
+                double heroX = hero.getX();
+                // Center the camera on the hero (adjust the camera's X position)
+                cameraView.setLayoutX(heroX);
+            }
         }
 
     }
-
-
-
-
 }
-
-    /*@Override
-    public Node getStyleableNode() {
-        return super.getStyleableNode();
-    }*/
 
