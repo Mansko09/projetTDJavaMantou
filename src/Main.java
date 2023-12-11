@@ -17,7 +17,7 @@ public class Main extends Application {
         Camera camera = new Camera(0,0);
         Group root= new Group();
         Pane pane = new Pane(root);
-        GameScene gameScene=new GameScene(pane,1400,400,camera);
+        GameScene gameScene=new GameScene(pane,1400,400);
         primaryStage.setScene(gameScene);
         primaryStage.show();
 

@@ -1,13 +1,8 @@
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
-import java.security.cert.PolicyNode;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 
 public class GameScene extends Scene {
@@ -22,9 +17,8 @@ public class GameScene extends Scene {
     private int currentFrame = 0;
     private AnimationTimer timer;
 
-    public GameScene(Pane root, double width, double height, Camera camera) {
+    public GameScene(Pane root, double width, double height) {
         super(root, width, height);
-        this.camera = camera;
         this.numberOfLives=3;
         this.left = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
         this.right = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
@@ -34,7 +28,7 @@ public class GameScene extends Scene {
 
         // Calculate the x-coordinate of the i-th frame (assuming 0-based indexing)
         //int frameIndexToShow = 5;
-        this.hero = new Hero(600, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        this.hero = new Hero(600, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png",0.5,-12);
         // Set the desired frame index to display (ex: 3 for the 4th frame)
         //hero.setFrameIndex(frameIndexToShow);
         //création coeurs
@@ -46,13 +40,15 @@ public class GameScene extends Scene {
             lifePoint.getImageView().setLayoutY(20);
             this.lifePoints.add(lifePoint);
         }
-
         left.getImageView().setLayoutX(0);
         right.getImageView().setLayoutX(width);
         //Hero's starting position
         hero.getImageView().setLayoutX(600);
         hero.getImageView().setLayoutY(250);
         hero.getImageView().setOpacity(1);
+        // Create a camera slightly off from the hero
+        camera = new Camera(hero.getImageView().getLayoutX() - 50, 250);
+        camera.bindToHero(hero);
         if (left != null && right != null && hero.getImageView() != null) {
             root.getChildren().add(left.getImageView());
             root.getChildren().add(right.getImageView());
@@ -61,13 +57,29 @@ public class GameScene extends Scene {
         } else {
             System.out.println("Un des nœuds est null. Vérifiez le chargement des images.");
         }
+        if (camera != null && camera.cameraView != null) {
+            root.getChildren().add(camera.cameraView);
+        } else {
+            System.out.println("Camera or cameraView is null.");
+        }
         // Ajout des coeurs à la scène
         for (StaticThing heart : lifePoints) {
             root.getChildren().add(heart.getImageView());
         }
         //hero.setFrameIndex(1); //to display the different starting positions
         startBackgroundScrolling();
+        startHeroRunning();
         //render(width);
+
+        //event to press key
+        this.setOnKeyPressed(event ->{
+            if (event.getCode()== KeyCode.SPACE){
+                System.out.println("Jump");
+                hero.jump();
+
+        }
+    });
+
 
     }
     private void startBackgroundScrolling() {
@@ -108,6 +120,20 @@ public class GameScene extends Scene {
 
     }
 
+    private void startHeroRunning() {
+        final long[] startNanoTime = {System.nanoTime()};
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long currentNanoTime) {
+                double elapsedTime = (currentNanoTime - startNanoTime[0]) / 1_000_000_000.0; // Time elapsed in seconds
+
+                // Update Hero's position based on constant speed
+                hero.move(elapsedTime);
+                startNanoTime[0] = currentNanoTime;
+            }
+        };
+        timer.start();
+    }
 
     
 

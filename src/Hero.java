@@ -11,8 +11,12 @@ public class Hero extends AnimatedThing {
     int frameHeight = 100; // Height of each frame in the sprite sheet
     int totalFrames = 6; // Total number of frames in the sprite sheet
     private List<Integer> listOfHeroFrames;
+    private double speed;//constant speed for the hero
+    private double gravity = 0.5;
+    private double jumpForce = -12;
+    private double velocityY=0;
 
-    public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName) {
+    public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName, double gravity, double jumpForce) {
         super(x, y, numberOfLives,maxIndex, windowHeight, windowWidth, fileName);
         listOfHeroFrames = new ArrayList<>();
         int frame0=0;
@@ -27,6 +31,9 @@ public class Hero extends AnimatedThing {
         listOfHeroFrames.add(frame3);
         listOfHeroFrames.add(frame4);
         listOfHeroFrames.add(frame5);
+        this.speed=speed;
+        this.gravity=gravity;
+        this.jumpForce=jumpForce;
     }
     //code to display the different starting positions of the hero
     public void setFrameIndex(int frameIndexToShow) {
@@ -69,44 +76,49 @@ public class Hero extends AnimatedThing {
     }
     @Override
     public void update(long time) {
-        /*if ((time - lastUpdateTime)>=100_000_000L){
-            lastUpdateTime=time;
-        }*/
         // Update the frame index for the running animation
         setFrameIndex(currentFrameIndex);
         currentFrameIndex = (currentFrameIndex + 1) % getTotalFrames();
+        //apply gravity to the Y velocity to simulate falling
+        velocityY+=gravity;
+        //update hero's position in the Y direction based on the velocity
+        double newY=getImageView().getLayoutY()+velocityY;
+        // Ensure the Hero cannot go below pixel 250
+        if (newY > 250) {
+            newY = 250;
+            velocityY = 0; // Stop falling when reaching the ground
+        }
+
+        // Set the new Y position for the Hero
+        getImageView().setLayoutY(newY);
 
     }
-
+    private boolean isOnGround() {
+        // Check if the Hero is on the ground
+        return getImageView().getLayoutY() == 250;
+    }
     public int getTotalFrames() {
         return totalFrames;
     }
+    //method to update the Hero's position based on constant speed
+    public void move(double time){
+        double newX=getImageView().getLayoutX() +speed*time;
+        getImageView().setLayoutX(newX);
+    }
 
-    public void changeFrameIndex(int currentFrame) {
-        if (currentFrame < listOfHeroFrames.size()) {
-            // Get the next frame position from the list
-            int nextFrameX = listOfHeroFrames.get(currentFrame);
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void jump(){
+        if(isOnGround()){
+            velocityY=jumpForce;
         }
     }
-    /*public void changeFrameIndex() {
-        /*int currentFrame = 0; // Current frame index
-        // Increment the frame index by 1 (assuming it loops back to 0)
-        currentFrame++;
-        if (currentFrame >= totalFrames ) {
-            currentFrame = 0;
-        }
-        // Condition spécifique pour gérer le cas où currentFrame = 0
-        if (currentFrame == 0) {
-            // Garder la première frame affichée
-            getImageView().setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
-        } else {
-            // Calculer la coordonnée x de la prochaine frame dans la sprite sheet
-            int nextFrameX = listOfHeroFrames.get(currentFrame);
-
-            // Afficher la prochaine frame dans la sprite sheet
-            getImageView().setViewport(new Rectangle2D(nextFrameX, 0, frameWidth, frameHeight));
-        }
-    }*/
 
 
 }
