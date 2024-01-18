@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hero extends AnimatedThing {
-    private long lastUpdateTime;
-    int maxIndex;
+    int Index=0;
     private int currentFrameIndex=0;
     int frameWidth = 80; // Width of each frame in the sprite sheet
     int frameHeight = 100; // Height of each frame in the sprite sheet
     int totalFrames = 8; // Total number of frames in the sprite sheet
     private List<Integer> listOfHeroFrames;
     private double speed;//constant speed for the hero
-    private double gravity = 0.5;
+    private double gravity = 0.8;
     private double jumpForce = -12; //aka the height of the jump
-    private double velocityY=0;
+    private double velocityY=-15;
     private boolean isJumping = false;
 
-    public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName, double gravity, double jumpForce) {
+    public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName) {
         super(x, y, numberOfLives,maxIndex, windowHeight, windowWidth, fileName);
         listOfHeroFrames = new ArrayList<>();
         int frame0=0;
@@ -36,10 +35,7 @@ public class Hero extends AnimatedThing {
         int running1=frameWidth+15;
         listOfHeroFrames.add(jumping0);
         listOfHeroFrames.add(running1);
-
         this.speed=speed;
-        this.gravity=gravity;
-        this.jumpForce=jumpForce;
     }
     //code with the different starting positions of the hero
     public void setFrameIndex(int frameIndexToShow) {
@@ -51,10 +47,12 @@ public class Hero extends AnimatedThing {
             frameX=listOfHeroFrames.get(0);
         }
         else {
-            if (frameIndexToShow >0 && frameIndexToShow < getTotalFrames()) {
-                frameX = listOfHeroFrames.get(frameIndexToShow);
-                if (frameIndexToShow >= 6) {
+            if (frameIndexToShow > 0 && frameIndexToShow <= getTotalFrames()) {
+                if (frameIndexToShow < 6) {
+                    frameX = listOfHeroFrames.get(frameIndexToShow);
+                } else if (frameIndexToShow < 8 && frameIndexToShow >= 6) {
                     frameY = 160;
+                    frameX = listOfHeroFrames.get(frameIndexToShow);
                 }
             }
         }
@@ -66,11 +64,10 @@ public class Hero extends AnimatedThing {
         // Update the frame index for the running animation if not jumping
         if (!isJumping) {
             setFrameIndex(currentFrameIndex);
-            currentFrameIndex = (currentFrameIndex + 1) % 6; // because there are only 6 frames for running
+            currentFrameIndex = (currentFrameIndex + 1) % 6; // Loop through frames
         }
-
         // Apply gravity to the Y velocity to simulate falling
-        velocityY += gravity ;
+        velocityY += gravity+10 ;
 
         // Update hero's position in the Y direction based on the velocity
         double newY = getImageView().getLayoutY() + velocityY;
@@ -80,7 +77,7 @@ public class Hero extends AnimatedThing {
             newY = 250;
             velocityY = 0; // Stop falling when reaching the ground
             isJumping = false; // Set jumping state to false
-            setFrameIndex(0); // Display default frame when landing (adjust as needed)
+            //setFrameIndex(0); // Display default frame when landing (adjust as needed)
         }
 
         // Check if the Hero is jumping or falling
@@ -105,10 +102,10 @@ public class Hero extends AnimatedThing {
         return totalFrames;
     }
     //method to update the Hero's position based on constant speed
-    public void move(double time){
+    /*public void move(double time){
         double newX=getImageView().getLayoutX() +speed*time;
         getImageView().setLayoutX(newX);
-    }
+    }*/
 
     public double getX() {
         return x;
@@ -120,9 +117,9 @@ public class Hero extends AnimatedThing {
 
     public void jump(){
         if(isOnGround()){
-            velocityY=jumpForce;
+            velocityY=jumpForce-30;
             isJumping = true; // Set jumping state to true when jumping
-            setFrameIndex(6); // Display jumping0 frame when jumping starts (adjust as needed)
+            setFrameIndex(6); // Display jumping0 frame when jumping starts
         }
     }
 

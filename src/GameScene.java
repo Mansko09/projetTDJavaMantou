@@ -16,6 +16,7 @@ public class GameScene extends Scene {
     private double backgroundSpeed=3;
     private int currentFrame = 0;
     private AnimationTimer timer;
+    private ArrayList<Foe> listOfFoes;
 
     public GameScene(Pane root, double width, double height) {
         super(root, width, height);
@@ -28,7 +29,7 @@ public class GameScene extends Scene {
 
         // Calculate the x-coordinate of the i-th frame (assuming 0-based indexing)
         //int frameIndexToShow = 5;
-        this.hero = new Hero(600, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png",0.5,-12);
+        this.hero = new Hero(400, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
         // Set the desired frame index to display (ex: 3 for the 4th frame)
         //hero.setFrameIndex(frameIndexToShow);
         //création coeurs
@@ -43,7 +44,7 @@ public class GameScene extends Scene {
         left.getImageView().setLayoutX(0);
         right.getImageView().setLayoutX(width);
         //Hero's starting position
-        hero.getImageView().setLayoutX(600);
+        hero.getImageView().setLayoutX(400);
         hero.getImageView().setLayoutY(250);
         hero.getImageView().setOpacity(1);
         // Create a camera slightly off from the hero
@@ -68,13 +69,11 @@ public class GameScene extends Scene {
         }
         //hero.setFrameIndex(1); //to display the different starting positions
         startBackgroundScrolling();
-        startHeroRunning();
         //render(width);
 
         //event to press key
         this.setOnKeyPressed(event ->{
             if (event.getCode()== KeyCode.SPACE){
-                System.out.println("Jump");
                 hero.jump();
 
         }
@@ -84,7 +83,7 @@ public class GameScene extends Scene {
     }
     private void startBackgroundScrolling() {
         final long[] startNanoTime = {System.nanoTime()};
-        final double frameDuration =0.10; // Temps en secondes entre chaque changement de frame
+        final double frameDuration =0.12; // Temps en secondes entre chaque changement de frame
         timer = new AnimationTimer() {
             @Override
             public void handle(long currentNanoTime) {
@@ -120,19 +119,6 @@ public class GameScene extends Scene {
 
     }
 
-    private void startHeroRunning() {
-        final long[] startNanoTime = {System.nanoTime()};
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long currentNanoTime) {
-                double elapsedTime = (currentNanoTime - startNanoTime[0]) / 1_000_000_000.0; // Time elapsed in seconds
-                // Update Hero's position based on constant speed
-                hero.move(elapsedTime);
-                startNanoTime[0] = currentNanoTime;
-            }
-        };
-        timer.start();
-    }
 
     
 

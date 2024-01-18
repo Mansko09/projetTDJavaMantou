@@ -57,7 +57,7 @@ public class Camera extends Parent {
             accelerationX = (springForceX - dampingForceX) / 1.0; // Assuming mass = 1.0;
 
             // Update velocity using Euler integration
-            double deltaTime = time / 1_000_000_000.0; // Convert time to seconds
+            double deltaTime = time / 1_000_000.0; // Convert time to seconds
             velocityX += accelerationX * deltaTime;
 
             // Update position using Euler integration
