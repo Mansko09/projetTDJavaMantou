@@ -119,11 +119,6 @@ public class Hero extends AnimatedThing {
     public int getTotalFrames() {
         return totalFrames;
     }
-    //method to update the Hero's position based on constant speed
-    /*public void move(double time){
-        double newX=getImageView().getLayoutX() +speed*time;
-        getImageView().setLayoutX(newX);
-    }*/
 
     public double getX() {
         return x;
@@ -142,14 +137,25 @@ public class Hero extends AnimatedThing {
     }
     public void moveLeft() {
         // Adjust the hero's X position to move left
-        double newX = getImageView().getLayoutX() - 10; // Adjust the movement speed
-        getImageView().setLayoutX(newX);
+        double newX = getImageView().getLayoutX() - 20; // Adjust the movement speed as needed
+
+        // Check if the new X position is within the left boundary
+        if (newX >= 0) {
+            getImageView().setLayoutX(newX);
+            // Flip the hero's image horizontally
+            getImageView().setScaleX(-1);
+        }
     }
 
     public void moveRight() {
-        // Adjust the hero's X position to move right
-        double newX = getImageView().getLayoutX() + 10; // Adjust the movement speed
-        getImageView().setLayoutX(newX);
+        double newX= getImageView().getLayoutX() + 20; // Adjust the movement speed as needed;
+        // Check if the new X position is within the right boundary
+        if (newX <=windowWidth-100) {
+            getImageView().setLayoutX(newX);
+            // Set the hero's image scale back to normal
+            getImageView().setScaleX(1);
+        }
+
     }
 
 
