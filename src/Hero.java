@@ -1,4 +1,6 @@
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ public class Hero extends AnimatedThing {
     private double jumpForce = -12; //aka the height of the jump
     private double velocityY=-15;
     private boolean isJumping = false;
+    private boolean isMovingLeft = false;
+    private boolean isMovingRight = false;
 
     public Hero(double x, double y, int numberOfLives, int maxIndex,  int windowHeight, int windowWidth, String fileName) {
         super(x, y, numberOfLives,maxIndex, windowHeight, windowWidth, fileName);
@@ -66,6 +70,12 @@ public class Hero extends AnimatedThing {
             setFrameIndex(currentFrameIndex);
             currentFrameIndex = (currentFrameIndex + 1) % 6; // Loop through frames
         }
+        // Check if moving left or right and adjust X position
+        if (isMovingLeft) {
+            moveLeft();
+        } else if (isMovingRight) {
+            moveRight();
+        }
         // Apply gravity to the Y velocity to simulate falling
         velocityY += gravity+10 ;
 
@@ -93,6 +103,14 @@ public class Hero extends AnimatedThing {
 
         // Set the new Y position for the Hero
         getImageView().setLayoutY(newY);
+
+    }
+    //methods to set movement flags
+    public void setMovingLeft(boolean movingLeft){
+        isMovingLeft = movingLeft;
+    }
+    public void setMovingRight(boolean movingRight) {
+        isMovingRight = movingRight;
     }
     private boolean isOnGround() {
         // Check if the Hero is on the ground
@@ -121,6 +139,17 @@ public class Hero extends AnimatedThing {
             isJumping = true; // Set jumping state to true when jumping
             setFrameIndex(6); // Display jumping0 frame when jumping starts
         }
+    }
+    public void moveLeft() {
+        // Adjust the hero's X position to move left
+        double newX = getImageView().getLayoutX() - 10; // Adjust the movement speed
+        getImageView().setLayoutX(newX);
+    }
+
+    public void moveRight() {
+        // Adjust the hero's X position to move right
+        double newX = getImageView().getLayoutX() + 10; // Adjust the movement speed
+        getImageView().setLayoutX(newX);
     }
 
 

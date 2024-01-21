@@ -70,15 +70,34 @@ public class GameScene extends Scene {
         //hero.setFrameIndex(1); //to display the different starting positions
         startBackgroundScrolling();
         //render(width);
-
-        //event to press key
-        this.setOnKeyPressed(event ->{
-            if (event.getCode()== KeyCode.SPACE){
+        // Initialize the ArrayList of Foes
+        listOfFoes = new ArrayList<>();
+        // Create a single Foe and add it to the ArrayList
+        Foe foe = new Foe(500, 250, 1, 6, frameHeight, frameWidth, "file:C:/path/to/foe_sprite_sheet.png");
+        listOfFoes.add(foe);
+        // Add the Foe's ImageView to the scene
+        root.getChildren().add(foe.getImageView());
+        //event to press/release key
+        this.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.SPACE) {
                 hero.jump();
-
-        }
-    });
-
+            } else if (event.getCode() == KeyCode.LEFT) {
+                // Set the left movement flag when the left arrow key is pressed
+                hero.setMovingLeft(true);
+            } else if (event.getCode() == KeyCode.RIGHT) {
+                // Set the right movement flag when the right arrow key is pressed
+                hero.setMovingRight(true);
+            }
+        });
+        this.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.LEFT) {
+                // Unset the left movement flag when the left arrow key is released
+                hero.setMovingLeft(false);
+            } else if (event.getCode() == KeyCode.RIGHT) {
+                // Unset the right movement flag when the right arrow key is released
+                hero.setMovingRight(false);
+            }
+        });
 
     }
     private void startBackgroundScrolling() {
@@ -113,9 +132,9 @@ public class GameScene extends Scene {
         right.getImageView().setLayoutX(newRightBackgroundX);
     }
     private void update(long time) {
-        // Call the camera's update method
         camera.update(time);
         hero.update(time);
+
 
     }
 
