@@ -12,7 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("TD PROJECT : RUNNER");
+        primaryStage.setTitle("PROJECT : RUNNER by Mantoulaye MBENGUE");
         primaryStage.setResizable(false);
         Camera camera = new Camera(0,0);
         Group root= new Group();

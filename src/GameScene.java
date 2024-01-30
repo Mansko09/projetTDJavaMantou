@@ -1,8 +1,13 @@
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
+
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameScene extends Scene {
     private ArrayList<StaticThing> lifePoints;
@@ -17,10 +22,12 @@ public class GameScene extends Scene {
     private int currentFrame = 0;
     private AnimationTimer timer;
     private ArrayList<Foe> listOfFoes;
+    private Pane root;
 
     public GameScene(Pane root, double width, double height) {
         super(root, width, height);
-        this.numberOfLives=3;
+        this.root = root;
+        this.numberOfLives=4;
         this.left = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
         this.right = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
         int frameWidth = 75; // Width of each frame in the sprite sheet
@@ -28,9 +35,9 @@ public class GameScene extends Scene {
 
 
         // Calculate the x-coordinate of the i-th frame (assuming 0-based indexing)
-        //int frameIndexToShow = 5;
+        //int frameIndexToShow = 13;
         this.hero = new Hero(400, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
-        // Set the desired frame index to display (ex: 3 for the 4th frame)
+        // Set the desired frame index to display
         //hero.setFrameIndex(frameIndexToShow);
         //création coeurs
         double heartSize = 20;
@@ -72,11 +79,11 @@ public class GameScene extends Scene {
         //render(width);
         // Initialize the ArrayList of Foes
         listOfFoes = new ArrayList<>();
-        // Create a single Foe and add it to the ArrayList
-        Foe foe = new Foe(500, 250, 1, 6, frameHeight, frameWidth, "file:C:/path/to/foe_sprite_sheet.png");
-        listOfFoes.add(foe);
-        // Add the Foe's ImageView to the scene
-        root.getChildren().add(foe.getImageView());
+        // Create two types of Foe and adding them to the ArrayList
+        Foe foe0 = new Foe(1200, 250, 2, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        Foe foe1 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        listOfFoes.add(foe0);
+        listOfFoes.add(foe1);
         //event to press/release key
         this.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
@@ -87,6 +94,11 @@ public class GameScene extends Scene {
             } else if (event.getCode() == KeyCode.RIGHT) {
                 // Set the right movement flag when the right arrow key is pressed
                 hero.setMovingRight(true);
+            } else if (event.getCode() == KeyCode.UP) {
+                // Pressing the upward arrow key triggers shooting
+                hero.setShooting(true);
+
+
             }
         });
         this.setOnKeyReleased(event -> {
@@ -96,6 +108,10 @@ public class GameScene extends Scene {
             } else if (event.getCode() == KeyCode.RIGHT) {
                 // Unset the right movement flag when the right arrow key is released
                 hero.setMovingRight(false);
+            }else if (event.getCode() == KeyCode.UP) {
+                // Releasing the upward arrow key stops shooting
+                hero.setShooting(false);
+
             }
         });
 
@@ -115,6 +131,26 @@ public class GameScene extends Scene {
             }
         };
         timer.start();
+        // Set random delays for foe appearance
+        Random random = new Random();
+        double foe0Delay = random.nextDouble() * 10; // Random delay between 0 and 10 seconds
+        double foe1Delay = random.nextDouble() * 10; // Random delay between 0 and 10 seconds
+
+        // Schedule foes to appear after their respective delays
+        Timeline foe0Timeline = new Timeline(new KeyFrame(Duration.seconds(foe0Delay), e -> showFoe(listOfFoes.get(0))));
+        Timeline foe1Timeline = new Timeline(new KeyFrame(Duration.seconds(foe1Delay), e -> showFoe(listOfFoes.get(1))));
+
+        // Start the timelines
+        foe0Timeline.play();
+        foe1Timeline.play();
+    }
+    private void showFoe(Foe foe) {
+        //Foe's starting position
+        foe.getImageView().setLayoutX(1400);
+        foe.getImageView().setLayoutY(250);
+        //foe.getImageView().setOpacity(1);
+        foe.getImageView().setScaleX(-1);
+        root.getChildren().add(foe.getImageView());
     }
 
     private void updateBackgroundPosition() {
@@ -134,40 +170,24 @@ public class GameScene extends Scene {
     private void update(long time) {
         camera.update(time);
         hero.update(time);
+        updateFoes(time);
+    }
+    private void updateFoes(long time) {
+        for (Foe foe : listOfFoes) {
+            foe.update(time);
+            double newFoeX = foe.getImageView().getLayoutX() - backgroundSpeed - foe.getSpeed();
+            foe.getImageView().setLayoutX(newFoeX);
 
-
+            // Check if the foe is out of bounds, then reset its position
+            if (foe.getImageView().getLayoutX() + foe.getImageView().getFitWidth() <= 0) {
+                resetFoePosition(foe);
+            }
+        }
     }
 
-
-    
-
-  /*  public void setViewPos(double posX, double posY){
-        this.imageView.setX(posX);
-        this.imageView.setY(posY);
+    private void resetFoePosition(Foe foe) {
+        double foeStartX = 1400 + Math.random() * 200; // Randomize starting position
+        foe.getImageView().setLayoutX(foeStartX);
     }
-
-    public void render(double width){
-        //modify positions based on camera coordinates
-        double cameraX=camera.getX();
-        double cameraY=camera.getY();
-
-        // Update positions of the left and right StaticThings based on the camera
-        //double leftX = -cameraX;
-        double leftY = -cameraY;
-        left.getImageView().setX(leftX);
-        left.getImageView().setY(leftY);
-
-        double rightX = width - cameraX;
-        double rightY = -cameraY;
-        right.getImageView().setX(rightX);
-        right.getImageView().setY(rightY);//
-        double leftSizeX=this.left.getSizeX();
-        double rightSizeX=this.right.getSizeX();
-        this.left.setViewPos(-cameraX+(leftSizeX+rightSizeX)*floor((cameraX+rightSizeX)/(leftSizeX+rightSizeX)),-cameraY);
-        this.right.setViewPos(-cameraX+leftSizeX+(leftSizeX+rightSizeX)*floor(cameraX/(leftSizeX+rightSizeX)),-cameraY);
-
-
-
-    }*/
 
 }
