@@ -9,7 +9,9 @@
 ```
 --module-path <./lib file path> --add-modules javafx.controls
 ```
-Make sure you replace `<./lib file path>` with your /lib folder's path
+Make sure you :
+- replace `<./lib file path>` with your /lib folder's path
+- replace the path for the hero and the foes frames with the path on your computer for "heros.png"
 
 You can now run the code. 
 If the IDE tells you that there is a problem with the JDK, click on solve automatically and wait for the download to end, then run the code again
