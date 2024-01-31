@@ -17,12 +17,11 @@ public class GameScene extends Scene {
     private StaticThing lifePoint;
     private Hero hero;
     int numberOfLives;
-    boolean isRunning=false;
     private double backgroundSpeed=3;
     private int currentFrame = 0;
     private AnimationTimer timer;
-    private ArrayList<Foe> listOfFoes;
     private Pane root;
+    ArrayList<Foe> listOfFoes = new ArrayList<>();
 
     public GameScene(Pane root, double width, double height) {
         super(root, width, height);
@@ -32,11 +31,14 @@ public class GameScene extends Scene {
         this.right = new StaticThing(width, height, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/desert.png");
         int frameWidth = 75; // Width of each frame in the sprite sheet
         int frameHeight = 100; // Height of each frame in the sprite sheet
-
-
+        // Create two types of Foe and adding them to the listOfFoes
+        Foe foe0 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        Foe foe1 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        listOfFoes.add(foe0);
+        listOfFoes.add(foe1);
         // Calculate the x-coordinate of the i-th frame (assuming 0-based indexing)
         //int frameIndexToShow = 13;
-        this.hero = new Hero(400, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        this.hero = new Hero(400, 250, 3, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png",listOfFoes);
         // Set the desired frame index to display
         //hero.setFrameIndex(frameIndexToShow);
         //création coeurs
@@ -76,14 +78,7 @@ public class GameScene extends Scene {
         }
         //hero.setFrameIndex(1); //to display the different starting positions
         startBackgroundScrolling();
-        //render(width);
-        // Initialize the ArrayList of Foes
-        listOfFoes = new ArrayList<>();
-        // Create two types of Foe and adding them to the ArrayList
-        Foe foe0 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
-        Foe foe1 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
-        listOfFoes.add(foe0);
-        listOfFoes.add(foe1);
+
         //event to press/release key
         this.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
@@ -189,5 +184,8 @@ public class GameScene extends Scene {
         double foeStartX = 1400 + Math.random() * 200; // Randomize starting position
         foe.getImageView().setLayoutX(foeStartX);
     }
-
+    public void requestFocusOnNode() {
+        // Call requestFocus on the node you want to focus on
+        hero.getImageView().requestFocus(); // Replace with the appropriate node in your GameScene
+    }
 }
