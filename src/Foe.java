@@ -29,8 +29,8 @@ public class Foe extends AnimatedThing{
         int frame1 = frameWidth + 15;
         int frame2 = 2 * frameWidth + 20;
         int frame3 = 3 * frameWidth + 25;
-        int frame4 = 4 * frameWidth + 30;
-        int frame5 = 5 * frameWidth + 25;
+        int frame4 = 4 * frameWidth + 35;
+        int frame5 = 5 * frameWidth + 30;
         listOfHeroFrames.add(frame0);
         listOfHeroFrames.add(frame1);
         listOfHeroFrames.add(frame2);
