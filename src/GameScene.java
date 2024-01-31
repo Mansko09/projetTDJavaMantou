@@ -80,7 +80,7 @@ public class GameScene extends Scene {
         // Initialize the ArrayList of Foes
         listOfFoes = new ArrayList<>();
         // Create two types of Foe and adding them to the ArrayList
-        Foe foe0 = new Foe(1200, 250, 2, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
+        Foe foe0 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
         Foe foe1 = new Foe(1200, 250, 1, 6, frameHeight, frameWidth, "file:C:/Users/mbeng/Documents/ENSEA_Mantou/2A/projetTDJavaMantou/files/heros.png");
         listOfFoes.add(foe0);
         listOfFoes.add(foe1);
